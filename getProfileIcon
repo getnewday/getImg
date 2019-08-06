@@ -1,0 +1,36 @@
+import requests
+import time
+from PIL import Image
+from io import BytesIO
+
+class Spider:
+    def __init__(self):
+        self.header = {'accept-encoding': 'gzip, deflate, br',
+                       'accept-language': 'zh-CN,zh;q=0.9',
+                       'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                                     'Chrome/67.0.3396.62 Safari/537.36',
+                       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'}
+        self.url = 'https://ossweb-img.qq.com/images/lol/img/profileicon2/profileicon'
+
+    def __get_img(self, pageNumber): 
+        res = requests.get(self.url+ str(pageNumber)+".jpg", headers=self.header, verify=False)
+        return res
+
+    def run(self):
+        for i in range(1,10000):
+            try:
+                print('正在下载第 %d 张' % (i))
+                img = self.__get_img(i)
+                image = Image.open(BytesIO(img.content))
+                image.save('D:\yunding-spider\profileicon\\%d.png'%i)
+                # time.sleep(1)
+            except OSError as e:
+                print(e,"找不到该文件")
+
+
+def main():
+    spider = Spider()
+    spider.run()
+
+if __name__ == '__main__':
+    main()
